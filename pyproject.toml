@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools >= 77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timeseries_agent"
+version = "0.0.23"
+description = "A Policy Gradient RL agent for time series prediction using PyTorch Lightning."
+authors = [
+    { name = "Collins Patrick Ohagwu", email = "cpohagwu@gmail.com" }
+]
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+]
+
+dependencies = [
+    "numpy>=1.20,!=1.24.0",
+    "pandas>=1.2",
+    "matplotlib>=3.4,!=3.6.1",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/cpohagwu/timeseries_agent"
+"Bug Tracker" = "https://github.com/cpohagwu/timeseries_agent/issues"
+"Documentation" = "https://timeseries_agent.readthedocs.io/en/latest/"
