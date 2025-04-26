@@ -123,15 +123,15 @@ trainer = L.Trainer(
     accelerator='auto',         # Use 'gpu' if available, otherwise 'cpu'
     devices='auto',             # Use all available devices (e.g., GPUs)
     log_every_n_steps=1,        # Logging happens per epoch in our setup
-    enable_checkpointing=False, # Disable default checkpointing if not needed
-    logger=L.pytorch.loggers.CSVLogger("logs", name="rl_agent"), # Log to CSV
+    enable_checkpointing=True,  # Enable checkpointing to save the model during training
+    logger=L.pytorch.loggers.CSVLogger("logs", name="single_models"), # Log to CSV
     deterministic=True,         # Ensure deterministic behavior for reproducibility
 )
 
 print(f"\nStarting RL training on {accelerator[0].upper()}...")
 # Train the agent
 # The dataloader provides indices; the agent runs the RL loop in training_step
-trainer.fit(model=agent, dataloaders=dataloader)
+trainer.fit(agent, dataloader)
 print("\nTraining finished.")
 
 
@@ -155,6 +155,6 @@ print(f"Trained model saved to: {os.path.join(model_dir, 'policy_agent.ckpt')}")
 logs = pd.read_csv(os.path.join(model_dir, "metrics.csv"))
 logs.set_index('epoch', inplace=True)
 logs[['train_reward', 'train_loss']].plot(subplots=True, figsize=(10, 6))
-plt.show()
 plt.savefig(os.path.join(model_dir, "training_logs.png")) # Save the plot
 print("Training logs plotted and saved to: ", os.path.join(model_dir, "training_logs.png"))
+plt.show()

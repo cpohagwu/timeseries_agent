@@ -127,9 +127,9 @@ plt.ylabel('Action (0, 1, or 2)')
 plt.title('Predicted Actions vs True Actions')
 plt.legend()
 plt.grid(True)
-plt.show()
 plt.savefig(os.path.join(model_dir, "predicted_vs_true_actions.png")) # Save the plot
 print("Plot saved to:", os.path.join(model_dir, "predicted_vs_true_actions.png"))
+plt.show()
 
 
 ## --- 5. (Optional) Plotting the predictions on TARGET_COLUMN ---
@@ -171,8 +171,8 @@ def plot_signal_line_chart(df: pd.DataFrame, title: str = "Predicted Actions on 
 
     # Display the plot
     plt.grid(True)
-    plt.show()
     plt.savefig(os.path.join(model_dir, "predicted_actions_on_target_column.png")) # Save the plot
     print("Plot saved to:", os.path.join(model_dir, "predicted_actions_on_target_column.png"))
+    plt.show()
 
 plot_signal_line_chart(data)

@@ -6,8 +6,9 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 
 <div align="center">
 
-[![PyPI version](https://badge.fury.io/py/timeseries-agent.svg)](https://test.pypi.org/project/timeseries-agent/)
-[![Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing)
+[![PyPI version](https://badge.fury.io/py/timeseries-agent.svg)](https://pypi.org/project/timeseries-agent/)
+[![Basic Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing)
+[![Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1FBAWEFUzloxOWuPrJsyKMYhhb6aqfFi-/view?usp=sharing)
 
 </div>
 
@@ -28,13 +29,15 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 ## Installation
 
 ```bash
-pip install -i https://test.pypi.org/simple/ timeseries-agent
+pip install timeseries-agent
 pip install lightning torch
 ```
 
 ## Getting Started
 
-The easiest way to get started is by following our [Colab Tutorial](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing), which walks through a complete example of training and testing a time series agent.
+We provide two interactive Colab tutorials to help you get started:
+1. [Basic Tutorial](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing) - Walks through a complete example of training and testing a time series agent.
+2. [Tuner Tutorial](https://drive.google.com/file/d/1FBAWEFUzloxOWuPrJsyKMYhhb6aqfFi-/view?usp=sharing) - Shows how to use the ModelTuner to find optimal hyperparameters for your agent.
 
 ## Using Your Own Data
 
