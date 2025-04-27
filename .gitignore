@@ -29,6 +29,3 @@ Thumbs.db
 
 # Project specific ignores
 logs/
-*.ckpt
-*.pt
-*.png
