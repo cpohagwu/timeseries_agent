@@ -91,7 +91,8 @@ hidden_layers_config = [100, 100, 10]           # Flexible hidden layers
 learning_rate = 0.001                           # Initial learning rate
 epsilon_start = 1.0                             # Initial exploration rate
 epsilon_end = 0.01                              # Final exploration rate
-epsilon_decay_epochs = 1000                     # Number of epochs for epsilon decay
+
+num_training_epochs = 1000                      # Number of training epochs
 
 agent = PolicyGradientAgent(
     full_data=data_df,                          # Agent needs access to full pandas DataFrame for reward calculation
@@ -104,7 +105,8 @@ agent = PolicyGradientAgent(
     normalize_state=NORMALIZE_STATE, 
     epsilon_start=epsilon_start, 
     epsilon_end=epsilon_end, 
-    epsilon_decay_epochs=epsilon_decay_epochs,
+    epsilon_decay_epochs_rate=0.5,        # Decay over 50% of training epochs
+    num_training_epochs=num_training_epochs,
     # activation_fn=nn.ReLU(),            # Optional: specify activation function
     # eval_noise_factor=0.1,              # Optional: noise for evaluation
 )
@@ -116,10 +118,9 @@ print(agent.network) # Print model architecture
 ## --- 5. Training with PyTorch Lightning ---
 # Move the agent's model to the appropriate device (GPU if available)
 accelerator = ('gpu', agent.to('cuda')) if torch.cuda.is_available() else ('cpu', agent.to('cpu'))
-num_epochs = 1000 # Number of training epochs
 
 trainer = L.Trainer(
-    max_epochs=num_epochs,
+    max_epochs=num_training_epochs,
     accelerator='auto',         # Use 'gpu' if available, otherwise 'cpu'
     devices='auto',             # Use all available devices (e.g., GPUs)
     log_every_n_steps=1,        # Logging happens per epoch in our setup

@@ -41,7 +41,8 @@ class PolicyGradientAgent(L.LightningModule):
                  normalize_state: bool = True,
                  epsilon_start: float = 0.9,
                  epsilon_end: float = 0.05,
-                 epsilon_decay_epochs: int = 500,
+                 epsilon_decay_epochs_rate: float = 0.5,
+                 num_training_epochs: int = 1000,
                  activation_fn: nn.Module = nn.Tanh(),
                  eval_noise_factor: float = 0.0,
                  ):
@@ -56,7 +57,7 @@ class PolicyGradientAgent(L.LightningModule):
         self.normalize_state = normalize_state
         self.epsilon_start = epsilon_start
         self.epsilon_end = epsilon_end
-        self.epsilon_decay_epochs = epsilon_decay_epochs
+        self.epsilon_decay_epochs = int(num_training_epochs * epsilon_decay_epochs_rate)
         self.output_size = output_size
         self.eval_noise_factor = eval_noise_factor
 

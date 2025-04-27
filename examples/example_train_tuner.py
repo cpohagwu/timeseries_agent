@@ -43,13 +43,14 @@ param_ranges = {
     ],
     'epsilon_start': [1.0, 0.9],
     'epsilon_end': [0.01, 0.05],
-    'epsilon_decay_epochs': [5, 10],
+    'epsilon_decay_epochs_rate': [0.4, 0.6],
 }
 
 # Base parameters that will be used for all models
 base_params = {
     'normalize_state': True,  # This parameter will be the same for all models
     'eval_noise_factor': 0.1,  # Noise factor for evaluation
+    'num_training_epochs': 10,  # Number of training epochs
 }
 
 # --- 3. Create and run the tuner ---
@@ -62,7 +63,7 @@ tuner = ModelTuner(
 # Train models with different hyperparameter combinations
 results = tuner.train(
     param_ranges=param_ranges,
-    num_epochs=10,  # Adjust based on your needs
+    num_epochs=base_params['num_training_epochs'],  # Number of epochs for each model
     base_params=base_params,
 )
 
@@ -88,8 +89,11 @@ best_params = {
     'hidden_layers': best_model['hidden_layers'],
     'epsilon_start': best_model['epsilon_start'],
     'epsilon_end': best_model['epsilon_end'],
-    'epsilon_decay_epochs': best_model['epsilon_decay_epochs'],
+    'epsilon_decay_epochs_rate': best_model['epsilon_decay_epochs_rate'],
 }
+
+# Set the number of training epochs for final training
+base_params['num_training_epochs'] = 1000  #  Best decay rate will be used on the num_training_epochs
 
 # Combine with base parameters
 final_params = {**base_params, **best_params}
@@ -112,7 +116,7 @@ agent = PolicyGradientAgent(
 
 # Create trainer for final model
 trainer = L.Trainer(
-    max_epochs=1000,  # Increased epochs for final training
+    max_epochs=base_params['num_training_epochs'],      # Use same number of epochs as defined in base_params
     accelerator='auto',
     devices='auto',
     log_every_n_steps=1,

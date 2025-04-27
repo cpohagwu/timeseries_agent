@@ -23,7 +23,7 @@ data2 = np.array([1, 0, 0] * 5)
 data3 = np.array([0, -2, -2, 0] * 5)
 data4 = np.array([np.sin(x) for x in np.linspace(0, 8 * np.pi, 20)])
 # Concatenate the data to create a single time series
-value_col = np.concatenate([data1, data2, data3, data4] * 3)
+value_col = np.concatenate([data1, data2, data3, data4])
 
 # Create a second feature by rolling the first feature and adding noise
 feature2_col = np.roll(value_col, 1) + np.random.randn(len(value_col)) * 0.1
@@ -34,7 +34,7 @@ test_df = pd.DataFrame({'value': value_col, 'feature2': feature2_col})
 
 
 ## --- 2. Instantiate PolicyGradientAgent directly ---
-model_dir = "logs/rl_agent/version_0"                       # Path to the trained agent version
+model_dir = "logs/single_models/version_0"                       # Path to the trained agent version
 model_path = os.path.join(model_dir, "policy_agent.ckpt")   # Path to the model checkpoint
 hparams_path = os.path.join(model_dir, "hparams.yaml")      # Path to the hyperparameters file
 

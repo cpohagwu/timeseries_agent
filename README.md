@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1PzYzSl8Xe-B9eBNI3Na6-3EOxHAQzSZY" width="300">
+  <img src="doc/_static/logo.png" width="300">
 </div>
 
 TimeSeries Agent is a powerful reinforcement learning library designed for time series analysis and prediction. Built on top of PyTorch and PyTorch Lightning, it provides a flexible framework for training RL agents to work with time series data.
@@ -7,13 +7,12 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 <div align="center">
 
 [![PyPI version](https://badge.fury.io/py/timeseries-agent.svg)](https://pypi.org/project/timeseries-agent/)
-[![Basic Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing)
-[![Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://drive.google.com/file/d/1FBAWEFUzloxOWuPrJsyKMYhhb6aqfFi-/view?usp=sharing)
+[![Basic Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tutorial.ipynb)
+[![Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tuner_tutorial.ipynb)
 
 </div>
-
 <div align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1U8imXhwcvvJGxRCpQjoO6Ypaf-F-EFFz"/>
+  <img src="doc/_static/predicted_actions_on_TARGET_COLUMN.png"/>
 </div>
 <br>
 
@@ -36,8 +35,8 @@ pip install lightning torch
 ## Getting Started
 
 We provide two interactive Colab tutorials to help you get started:
-1. [Basic Tutorial](https://colab.research.google.com/drive/1WU9nhn5U3XGTmRmLrm2BRQ8xXoPplTNn?usp=sharing) - Walks through a complete example of training and testing a time series agent.
-2. [Tuner Tutorial](https://drive.google.com/file/d/1FBAWEFUzloxOWuPrJsyKMYhhb6aqfFi-/view?usp=sharing) - Shows how to use the ModelTuner to find optimal hyperparameters for your agent.
+1. [Basic Tutorial](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tutorial.ipynb) - Walks through a complete example of training and testing a time series agent.
+2. [Tuner Tutorial](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tuner_tutorial.ipynb) - Shows how to use the ModelTuner to find optimal hyperparameters for your agent.
 
 ## Using Your Own Data
 
@@ -78,6 +77,18 @@ Key considerations when preparing your data:
 - The target column should contain the values you want to predict
 - Additional features can help improve prediction accuracy
 - The lookback period determines how much historical data the agent considers
+
+## Development
+
+TimeSeries Agent is actively being developed on [GitHub](https://github.com/cpohagwu/timeseries_agent). Please note that the API is subject to change as we continue to improve and enhance the library.
+
+### Contributing
+
+We welcome contributions to TimeSeries Agent! Whether it's improving documentation, adding new features, fixing bugs, or suggesting improvements, your help is appreciated. Feel free to submit pull requests or open discussions on GitHub.
+
+### Issues and Bug Reports
+
+If you encounter any issues or bugs, please report them on our [GitHub Issues page](https://github.com/cpohagwu/timeseries_agent/issues). Your feedback helps us improve the library and fix problems faster.
 
 ## License
 
