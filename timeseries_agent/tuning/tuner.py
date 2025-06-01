@@ -7,7 +7,7 @@ from copy import deepcopy
 import torch
 from torch.utils.data import DataLoader
 from ..models.policy_gradient_agent import PolicyGradientAgent
-from ..data.rl_dataset import RLTimeSeriesDataset
+from ..data.rl_sequence_dataset import SequentialTimeSeriesDataset
 
 class ModelTuner:
     """
@@ -90,7 +90,7 @@ class ModelTuner:
 
             # Create dataset with current lookback
             lookback = params.get('lookback', base_params.get('lookback', 7))
-            dataset = RLTimeSeriesDataset(
+            dataset = SequentialTimeSeriesDataset(
                 data=self.data_df,
                 lookback=lookback,
             )

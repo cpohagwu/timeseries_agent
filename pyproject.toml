@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "timeseries_agent"
-version = "0.0.25"
+version = "0.0.26"
 description = "A Policy Gradient RL agent for time series prediction using PyTorch Lightning."
 authors = [
     { name = "Collins Patrick Ohagwu", email = "cpohagwu@gmail.com" }
@@ -22,9 +22,14 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy>=1.20,!=1.24.0",
-    "pandas>=1.2",
-    "matplotlib>=3.4,!=3.6.1",
+    "pandas>=1.0.0",
+    "numpy>=1.19.0",
+    "lightning>=2.5.0",    
+    "matplotlib>=3.0.0",
+    'torch>=1.9.0; platform_system=="Linux"',
+    'torch>=1.9.0; platform_system=="Darwin"',
+    'torch>=1.9.0; platform_system=="Windows"',
+    "scikit-learn>=1.6.1",
 ]
 
 [project.urls]

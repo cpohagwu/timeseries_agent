@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 import torch.optim as optim
 import lightning as L
 from typing import List, Any, Union
@@ -7,8 +8,8 @@ import torch.nn.functional as F
 import numpy as np
 import pandas as pd
 
-# Import helper functions
-from ..utils.helpers import get_state_tensor, calculate_reward, sample_action
+# Import utility functions for RL
+from ..utils.rl_utils import get_state_tensor, calculate_reward, sample_action
 
 
 class PolicyGradientAgent(L.LightningModule):
@@ -52,6 +53,7 @@ class PolicyGradientAgent(L.LightningModule):
             raise ValueError("hidden_layers list cannot be empty.")
 
         # Store essential parameters needed for the RL loop
+        self.full_data = full_data.copy()  # TODO: Store original DataFrame for visualization
         self.full_series_np = full_data.values.astype(np.float32)
         self.lookback = lookback
         self.normalize_state = normalize_state
@@ -84,14 +86,26 @@ class PolicyGradientAgent(L.LightningModule):
         # --- Policy Network ---
         input_size = input_features * lookback
         layers = []
-        layers.append(nn.Linear(input_size, hidden_layers[0]))
+        # First layer
+        first_layer = nn.Linear(input_size, hidden_layers[0])
+        init.xavier_uniform_(first_layer.weight)
+        init.zeros_(first_layer.bias)
+        layers.append(first_layer)
         layers.append(self.activation_fn)
 
+        # Hidden layers
         for i in range(len(hidden_layers) - 1):
-            layers.append(nn.Linear(hidden_layers[i], hidden_layers[i+1]))
+            linear_layer = nn.Linear(hidden_layers[i], hidden_layers[i+1])
+            init.xavier_uniform_(linear_layer.weight)
+            init.zeros_(linear_layer.bias)
+            layers.append(linear_layer)
             layers.append(self.activation_fn)
 
-        layers.append(nn.Linear(hidden_layers[-1], output_size))
+        # Output layer
+        output_layer = nn.Linear(hidden_layers[-1], output_size)
+        init.xavier_uniform_(output_layer.weight)
+        init.zeros_(output_layer.bias)
+        layers.append(output_layer)
         # Output raw logits, Softmax will be applied before sampling
 
         self.network = nn.Sequential(*layers)
@@ -256,4 +270,3 @@ class PolicyGradientAgent(L.LightningModule):
 
         self.log('val_avg_reward', avg_test_reward, on_step=False, on_epoch=True, prog_bar=True, logger=True)
         self.log('val_pass_percentage', pass_percentage, on_step=False, on_epoch=True, prog_bar=False, logger=True)
-        return {'val_avg_reward': avg_test_reward, 'val_pass_percentage': pass_percentage}

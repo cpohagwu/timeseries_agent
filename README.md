@@ -12,7 +12,7 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 
 </div>
 <div align="center">
-  <img src="doc/_static/predicted_actions_on_TARGET_COLUMN.png"/>
+  <img src="doc/_static/predictions_animation.gif"/>
 </div>
 <br>
 
@@ -20,16 +20,16 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 
 * Policy gradient-based reinforcement learning for time series prediction
 * Easy integration with existing PyTorch workflows
-* Support for custom time series datasets
+* Support for custom time series datasets (multivariate)
 * Built-in state normalization and reward calculation
-* Flexible neural network architecture configuration
+* Flexible neural network architecture configuration (and activation function)
 * Real-time prediction capabilities
 
 ## Installation
+You can install TimeSeries Agent using pip:
 
 ```bash
 pip install timeseries-agent
-pip install lightning torch
 ```
 
 ## Getting Started
@@ -42,11 +42,11 @@ We provide two interactive Colab tutorials to help you get started:
 
 To use TimeSeries Agent with your own data, you need to:
 
-1. Prepare your time series data as a pandas DataFrame with at least one target column.
+1. Prepare your time series data as a pandas DataFrame.
 
 ```python
 import pandas as pd
-from timeseries_agent import RLTimeSeriesDataset, PolicyGradientAgent
+from timeseries_agent import SequentialTimeSeriesDataset, PolicyGradientAgent
 
 # Load your time series data
 data_df = pd.DataFrame({
@@ -57,9 +57,9 @@ data_df = pd.DataFrame({
 })
 
 # Configure the RL environment
-LOOKBACK = 7  # Number of past time steps to consider
-TARGET_COLUMN = 'value'  # Column for reward calculation
-NUM_FEATURES = data_df.shape[1]  # Number of features in dataset
+LOOKBACK = 7                       # Number of past time steps to consider
+TARGET_COLUMN = 'value'            # Column for reward calculation
+NUM_FEATURES = data_df.shape[1]    # Number of features in dataset
 
 # Create and train the agent
 agent = PolicyGradientAgent(
@@ -68,7 +68,7 @@ agent = PolicyGradientAgent(
     input_features=NUM_FEATURES,
     lookback=LOOKBACK,
     hidden_layers=[100, 100, 10],  # Customize network architecture
-    normalize_state=True  # Enable state normalization
+    normalize_state=True           # Enable state normalization
 )
 ```
 
@@ -77,6 +77,13 @@ Key considerations when preparing your data:
 - The target column should contain the values you want to predict
 - Additional features can help improve prediction accuracy
 - The lookback period determines how much historical data the agent considers
+- Ensure a balanced distribution of the actions you want to predict
+
+</div>
+<div align="center">
+  <img src="doc/_static/predictions_analysis.png"/>
+</div>
+<br>
 
 ## Development
 
@@ -92,4 +99,4 @@ If you encounter any issues or bugs, please report them on our [GitHub Issues pa
 
 ## License
 
-TimeSeries Agent is released under the MIT License. See [LICENSE](LICENSE) file for details.
+TimeSeries Agent is released under the Apache License 2.0 License. See [LICENSE](LICENSE) file for details.

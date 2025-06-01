@@ -4,10 +4,11 @@ import numpy as np
 from torch.utils.data import Dataset
 from typing import Union, Tuple
 
-class RLTimeSeriesDataset(Dataset):
+class SequentialTimeSeriesDataset(Dataset):
     """
-    Dataset for Reinforcement Learning on time series.
-    Provides access to indices to allow sequential processing in the RL loop.
+    Dataset for sequential access to time series data in Reinforcement Learning.
+    Provides indexed access to time steps while respecting lookback windows
+    for proper sequential processing in the RL loop.
 
     Args:
         data (pd.DataFrame): Input DataFrame containing time series data.
