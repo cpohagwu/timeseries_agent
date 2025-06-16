@@ -1,18 +1,21 @@
+# TimeSeries Agent
+
 <div align="center">
-  <img src="doc/_static/logo.png" width="300">
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/logo.png" width="300">
 </div>
+
+<br>
+
+[![PyPI version](https://badge.fury.io/py/timeseries-agent.svg)](https://pypi.org/project/timeseries-agent/)
+[![PyPI Downloads](https://static.pepy.tech/badge/timeseries-agent)](https://pepy.tech/projects/timeseries-agent)
+[![Basic Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tutorial.ipynb)
+[![Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tuner_tutorial.ipynb)
+[![Genetic Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_genetic_tuner_tutorial.ipynb)
 
 TimeSeries Agent is a powerful reinforcement learning library designed for time series analysis and prediction. Built on top of PyTorch and PyTorch Lightning, it provides a flexible framework for training RL agents to work with time series data.
 
 <div align="center">
-
-[![PyPI version](https://badge.fury.io/py/timeseries-agent.svg)](https://pypi.org/project/timeseries-agent/)
-[![Basic Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tutorial.ipynb)
-[![Tuner Tutorial](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tuner_tutorial.ipynb)
-
-</div>
-<div align="center">
-  <img src="doc/_static/predictions_animation.gif"/>
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/predictions_animation.gif"/>
 </div>
 <br>
 
@@ -37,6 +40,7 @@ pip install timeseries-agent
 We provide two interactive Colab tutorials to help you get started:
 1. [Basic Tutorial](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tutorial.ipynb) - Walks through a complete example of training and testing a time series agent.
 2. [Tuner Tutorial](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_tuner_tutorial.ipynb) - Shows how to use the ModelTuner to find optimal hyperparameters for your agent.
+3. [Genetic Tuner Tutorial](https://colab.research.google.com/github/cpohagwu/timeseries_agent/blob/main/examples/timeseries_agent_genetic_tuner_tutorial.ipynb) - Shows how to use the GeneticTuner to find optimal hyperparameters for your agent. The genetic tuner uses evolutionary algorithms with diversity scoring and simulated annealing to efficiently explore the parameter space.
 
 ## Using Your Own Data
 
@@ -59,7 +63,6 @@ data_df = pd.DataFrame({
 # Configure the RL environment
 LOOKBACK = 7                       # Number of past time steps to consider
 TARGET_COLUMN = 'value'            # Column for reward calculation
-NUM_FEATURES = data_df.shape[1]    # Number of features in dataset
 
 # Create and train the agent
 agent = PolicyGradientAgent(
@@ -81,7 +84,7 @@ Key considerations when preparing your data:
 
 </div>
 <div align="center">
-  <img src="doc/_static/predictions_analysis.png"/>
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/predictions_analysis.png"/>
 </div>
 <br>
 

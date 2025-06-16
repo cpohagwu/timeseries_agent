@@ -18,6 +18,7 @@ dist/
 # Log files and temp files
 *.log
 *.tmp
+*png
 
 # OS generated files
 .DS_Store

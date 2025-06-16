@@ -20,7 +20,6 @@ class PolicyGradientAgent(L.LightningModule):
     Args:
         full_data (pd.DataFrame): The entire time series DataFrame.
         target_column (Union[str, int]): Name or index of the target column for reward calculation.
-        input_features (int): Number of features in the input time series.
         lookback (int): Number of past time steps used as state.
         hidden_layers (List[int]): Neurons in each hidden layer.
         output_size (int): Number of possible actions (e.g., 3 for Up, Down, Same).
@@ -28,13 +27,14 @@ class PolicyGradientAgent(L.LightningModule):
         normalize_state (bool): Whether to normalize the state window.
         epsilon_start (float): Initial epsilon for epsilon-greedy exploration.
         epsilon_end (float): Final epsilon value.
-        epsilon_decay_epochs (int): Number of epochs over which epsilon decays.
+        epsilon_decay_epochs_rate (float): Fraction of training epochs over which epsilon decays.
+        num_epochs (int): Total number of training epochs.
         activation_fn (nn.Module): Activation function. Defaults to nn.Tanh().
+        eval_noise_factor (float): Noise factor for evaluation phase, defaults to 0.0.
     """
     def __init__(self,
                  full_data: pd.DataFrame,
                  target_column: Union[str, int],
-                 input_features: int,
                  lookback: int,
                  hidden_layers: List[int],
                  output_size: int = 3,
@@ -43,7 +43,7 @@ class PolicyGradientAgent(L.LightningModule):
                  epsilon_start: float = 0.9,
                  epsilon_end: float = 0.05,
                  epsilon_decay_epochs_rate: float = 0.5,
-                 num_training_epochs: int = 1000,
+                 num_epochs: int = 1000,
                  activation_fn: nn.Module = nn.Tanh(),
                  eval_noise_factor: float = 0.0,
                  ):
@@ -55,11 +55,12 @@ class PolicyGradientAgent(L.LightningModule):
         # Store essential parameters needed for the RL loop
         self.full_data = full_data.copy()  # TODO: Store original DataFrame for visualization
         self.full_series_np = full_data.values.astype(np.float32)
+        self.num_features = full_data.shape[1] # Number of features (columns) in the DataFrame
         self.lookback = lookback
         self.normalize_state = normalize_state
         self.epsilon_start = epsilon_start
         self.epsilon_end = epsilon_end
-        self.epsilon_decay_epochs = int(num_training_epochs * epsilon_decay_epochs_rate)
+        self.epsilon_decay_epochs = int(num_epochs * epsilon_decay_epochs_rate)
         self.output_size = output_size
         self.eval_noise_factor = eval_noise_factor
 
@@ -84,7 +85,7 @@ class PolicyGradientAgent(L.LightningModule):
         self.activation_fn = activation_fn
 
         # --- Policy Network ---
-        input_size = input_features * lookback
+        input_size = self.num_features * lookback
         layers = []
         # First layer
         first_layer = nn.Linear(input_size, hidden_layers[0])
@@ -120,8 +121,8 @@ class PolicyGradientAgent(L.LightningModule):
 
         Args:
             state_tensor (torch.Tensor): Input state tensor of shape
-                                         (batch_size, lookback, input_features)
-                                         or (lookback, input_features) if batch_size=1.
+                                         (batch_size, lookback, num_features)
+                                         or (lookback, num_features) if batch_size=1.
 
         Returns:
             torch.Tensor: Action logits of shape (batch_size, output_size).
