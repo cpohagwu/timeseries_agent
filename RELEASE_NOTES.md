@@ -7,6 +7,7 @@
 - Introduced shared checkpoint management between grid search and genetic algorithm tuners
 - Improved weight initialization consistency through checkpoint loading
 - Removed `input_features` parameter from `PolicyGradientAgent()` initialization
+- Removed `num_training_epochs` parameter from `tuner.train()` method. Now part of the `base_params` as `num_epochs`
 
 ### New Features
 - Added `num_epochs_best_model` parameter to continue training from the best model found during tuning
