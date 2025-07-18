@@ -4,7 +4,7 @@ import numpy as np
 from typing import Dict, List, Any, Union, Tuple
 import pandas as pd
 from copy import deepcopy
-from .tuner import ModelTuner
+from .base import ModelTuner
 
 def calculate_diversity_score(params1: Dict[str, Any], params2: Dict[str, Any]) -> float:
     """
@@ -28,19 +28,16 @@ def calculate_diversity_score(params1: Dict[str, Any], params2: Dict[str, Any]) 
                 
     return score / total_params if total_params > 0 else 0
 
-def calculate_fitness(val_avg_reward: float, val_pass_percentage: float) -> float:
+def calculate_fitness(val_reward: float, val_accuracy: float) -> float:
     """Calculate fitness score from validation metrics."""
-    return val_avg_reward * val_pass_percentage
+    return val_reward * val_accuracy
 
 class GeneticTuner(ModelTuner):
     """
     A tuner class that uses genetic algorithms for hyperparameter optimization.
     
     Args:
-        data_df (pd.DataFrame): The time series DataFrame to use for training
         base_log_dir (str): Base directory for storing logs of different model versions
-        target_column (Union[str, int]): Name or index of the target column for reward calculation
-        output_size (int): Number of possible actions
         population_size (int): Size of the population in genetic algorithm
         num_generations (int): Number of generations to run
         mutation_rate (float): Probability of mutation
@@ -50,10 +47,7 @@ class GeneticTuner(ModelTuner):
     """
     def __init__(
         self,
-        data_df: pd.DataFrame,
         base_log_dir: str = "logs/tuning",
-        target_column: Union[str, int] = "value",
-        output_size: int = 3,
         population_size: int = 20,
         num_generations: int = 10,
         mutation_rate: float = 0.1,
@@ -61,7 +55,7 @@ class GeneticTuner(ModelTuner):
         initial_temperature: float = 100.0,
         cooling_rate: float = 0.95,
     ):
-        super().__init__(data_df, base_log_dir, target_column, output_size)
+        super().__init__(base_log_dir)
         self.results_prefix = "genetic_tuning_results"
         self.population_size = population_size
         self.num_generations = num_generations
@@ -186,8 +180,8 @@ class GeneticTuner(ModelTuner):
                 
                 # Calculate fitness
                 fitness = calculate_fitness(
-                    result['val_avg_reward'],
-                    result['val_pass_percentage']
+                    result['val_reward'],
+                    result['val_accuracy']
                 )
                 
                 # Store results
@@ -254,7 +248,7 @@ class GeneticTuner(ModelTuner):
         
         # Store best model information
         best_result = results_df.iloc[0]
-        self.best_model_checkpoint = os.path.join(best_result['model_dir'], "model.ckpt")
+        self.best_model_checkpoint = os.path.join(best_result['model_dir'], "checkpoints", "last.ckpt")
         self.best_model_params = {k: best_result[k] for k in params_grid.keys()}
         
         # Save results with version number
@@ -262,17 +256,5 @@ class GeneticTuner(ModelTuner):
         results_path = os.path.join(self.base_log_dir, f"{self.results_prefix}_v{version}.csv")
         results_df.to_csv(results_path, index=False)
         print(f"\nTuning results saved to: {results_path}")
-        
-        # If num_epochs_best_model is provided, continue training the best model
-        num_epochs_best_model = base_params.get('num_epochs_best_model', None)
-        if num_epochs_best_model is not None and num_epochs_best_model > 0:
-            print(f"\nContinuing training of best model for {num_epochs_best_model} epochs...")
-            best_model_params = deepcopy(base_params or {})
-            best_model_params.update(self.best_model_params)
-            self.continue_training_best_model(
-                num_epochs=num_epochs_best_model,
-                params=best_model_params,
-                model_name="genetic_best_model_continued",
-            )
         
         return results_df

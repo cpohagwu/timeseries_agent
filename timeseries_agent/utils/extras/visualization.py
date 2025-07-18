@@ -3,120 +3,105 @@
 import os
 import numpy as np
 import pandas as pd
+import lightning as L
 import matplotlib.pyplot as plt
+import seaborn as sns
 import matplotlib.animation as animation
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score, precision_recall_fscore_support
 
-def plot_signal_line_chart(df: pd.DataFrame, target_column: str, action_labels: dict, 
-                          save_path: str = None) -> None:
-    """
-    Plot time series data with action markers and action distribution comparison.
-    
-    Args:
-        df: DataFrame containing the time series data and predictions
-        target_column: Name of the target column to plot
-        action_labels: Dictionary mapping action indices to their labels
-        save_path: Optional path to save the plot
-    """
-    plt.style.use('classic')
-    plt.rcParams['figure.autolayout'] = True  # Automatically adjust layout to fit elements
-    
-    # Create figure and axis
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 8), dpi=100, height_ratios=[3, 1])
-    fig.patch.set_facecolor('white')
-    
-    # Plot main signal on top subplot
-    line = ax1.plot(df.index, df[target_column], label=target_column, 
-                   color='#2E86C1', linewidth=2, alpha=0.8)
-    
-    # Plot actions with enhanced markers
-    up_actions = df[df[action_labels[0]] == 1]
-    down_actions = df[df[action_labels[1]] == 1]
-    same_actions = df[df[action_labels[2]] == 1]
-    
-    # Add markers with enhanced styling
-    ax1.scatter(up_actions.index, up_actions[target_column], 
-               marker='^', color='#27AE60', s=100, label=action_labels[0],
-               alpha=0.7, edgecolor='white', linewidth=1)
-    ax1.scatter(down_actions.index, down_actions[target_column], 
-               marker='v', color='#E74C3C', s=100, label=action_labels[1],
-               alpha=0.7, edgecolor='white', linewidth=1)
-    ax1.scatter(same_actions.index, same_actions[target_column], 
-               marker='o', color='#F39C12', s=100, label=action_labels[2],
-               alpha=0.7, edgecolor='white', linewidth=1)
-    
-    # Add action distribution comparison on bottom subplot
-    x = np.arange(len(action_labels))
-    width = 0.35  # Width of bars
-    
-    # Count distributions
-    true_dist = pd.Series(df['true_action']).value_counts().sort_index()
-    pred_dist = df['predicted_action'].value_counts().sort_index()
-    
-    # Create grouped bars
-    rects1 = ax2.bar(x - width/2, true_dist, width, label='True', 
-                     color='#3498DB', alpha=0.7)
-    rects2 = ax2.bar(x + width/2, pred_dist, width, label='Predicted',
-                     color='#E74C3C', alpha=0.7)
-    
-    # Customize bottom subplot
-    ax2.set_ylabel('Count', fontsize=14)
-    ax2.set_title('Action Distribution Comparison', fontsize=16, pad=15)
-    ax2.set_xticks(x)
-    ax2.set_xticklabels([action_labels[i] for i in range(len(action_labels))])
-    ax2.legend()
-    
-    # Add value labels on bars
-    def autolabel(rects):
-        for rect in rects:
-            height = rect.get_height()
-            ax2.annotate(f'{int(height)}',
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 3),  # 3 points vertical offset
-                        textcoords="offset points",
-                        ha='center', va='bottom')
-    
-    autolabel(rects1)
-    autolabel(rects2)
-    
-    # Enhance grid
-    ax1.grid(True, linestyle='--', alpha=0.7)
-    ax2.grid(True, linestyle='--', alpha=0.7)
-    
-    # Customize axes
-    ax1.set_xlabel('Time Step', fontsize=14)
-    ax1.set_ylabel(target_column, fontsize=14)
-    
-    # Add subtitles
-    ax1.set_title('Signal and Predicted Actions', fontsize=16, pad=10)
-    
-    # Enhance legend
-    ax1.legend(bbox_to_anchor=(1.01, 1), loc='upper left', 
-              fontsize=12, frameon=True, facecolor='white', framealpha=1)
-    
-    # Add accuracy text
-    accuracy = sum(df['predicted_action'] == df['true_action']) / len(df['true_action']) * 100
-    ax1.text(0.02, 0.92, f'Accuracy: {accuracy:.1f}%', 
-             transform=ax1.transAxes, fontsize=14,
-             bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray'))
-    
-    # Adjust layout
-    plt.tight_layout()
+AGENT_CLASSES = {
+    "PPOAgent": "ppo",
+    "ReinforceAgent": "reinforce",
+    "ReinforceStepAgent": "reinforce_step"
+}
 
-    if save_path:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
+ACTION_LABELS = {0: 'Up', 1: 'Down', 2: 'Same'}
+
+def plot_training_metrics(agent: L.LightningModule):
+    """
+    Plots training metrics for reward/accuracy and loss/epsilon.
+
+    Args:
+        agent (L.LightningModule): The Lightning module containing training metrics.
+
+    """
+    logs = pd.read_csv(os.path.join(agent.trainer.logger.log_dir, "metrics.csv"))
+    logs.set_index('epoch', inplace=True)
+
+    agent_class = agent.__class__.__name__
+    if agent_class in AGENT_CLASSES:
+        agent_type = AGENT_CLASSES[agent_class]
     
+    log_dir = agent.trainer.logger.log_dir
+
+    # Plot for train_reward and train_accuracy
+    fig, ax1 = plt.subplots(figsize=(10, 3))
+    ax1.plot(logs.index, logs['train_reward'], color='tab:blue', label='Reward')
+    ax1.set_ylabel('Reward', color='tab:blue')
+    ax1.tick_params(axis='y', labelcolor='tab:blue')
+    ax2 = ax1.twinx()
+    ax2.plot(logs.index, logs['train_accuracy'], color='tab:orange', label='Accuracy')
+    ax2.set_ylabel('Accuracy', color='tab:orange')
+    ax2.tick_params(axis='y', labelcolor='tab:orange')
+    ax1.set_xlabel('Epoch') # Set x-axis label
+    plt.title("Training Metrics")
+    fig.tight_layout()
+    if log_dir:
+        plt.savefig(os.path.join(log_dir, "training_metrics_reward.png"))
     plt.show()
 
-def plot_confusion_matrix(true_actions: list, predicted_actions: list, 
-                         action_labels: dict, save_path: str = None) -> None:
+    # Plot for train_loss and train_epsilon/train_entropy
+    ax2_values = logs['train_epsilon'] if agent_type in ['reinforce_step', 'reinforce'] else logs['train_entropy']
+    fig, ax1 = plt.subplots(figsize=(10, 3))
+    ax1.plot(logs.index, logs['train_loss'], color='tab:blue', label='Loss')
+    ax1.set_ylabel('Loss', color='tab:blue')
+    ax1.tick_params(axis='y', labelcolor='tab:blue')
+    ax2 = ax1.twinx()
+    ax2.plot(logs.index, ax2_values, color='tab:orange', label='Epsilon' if agent_type in ['reinforce_step', 'reinforce'] else 'Entropy')
+    ax2.set_ylabel('Epsilon' if agent_type in ['reinforce_step', 'reinforce'] else 'Entropy', color='tab:orange')
+    ax2.tick_params(axis='y', labelcolor='tab:orange')
+    ax1.set_xlabel('Epoch')  # Set x-axis label
+    plt.title("Training Metrics")
+    fig.tight_layout()
+    if log_dir:
+        plt.savefig(os.path.join(log_dir, "training_metrics_loss.png"))
+    plt.show()
+
+def plot_prediction_density(y_true: list, y_pred: list, save_path: str = None):
+    """
+    Creates a density plot of predicted vs true values.
+
+    Args:
+        y_true (list): List of true values.
+        y_pred (list): List of predicted values.
+        save_path (str, optional): Path to save the plot. Defaults to None.
+    """
+    # Set style
+    plt.style.use('classic')
+    plt.rcParams['figure.autolayout'] = True  # Automatically adjust layout to fit elements
+   
+    # Create figure with larger size
+    fig, ax = plt.subplots(figsize=(8, 4))
+    fig.patch.set_facecolor('white')
+
+    sns.kdeplot(y_pred, fill=True, color='skyblue', label='Predicted', alpha=0.6)
+    sns.kdeplot(y_true, fill=True, color='orange', label='True', alpha=0.4)
+    plt.title('Density Plot of Predicted vs True Distribution')
+    plt.xlabel('Value')
+    plt.ylabel('Density')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend()
+    if save_path:
+        plt.savefig(save_path)
+    plt.show()
+
+def plot_confusion_matrix_n_metrics(y_true: list, y_pred: list, save_path: str = None) -> None:
     """
     Creates and plots an enhanced confusion matrix with additional metrics.
     
     Args:
-        true_actions: List of true actions
+        y_true: List of true actions
         predicted_actions: List of predicted actions
-        action_labels: Dictionary mapping action indices to their labels
         save_path: Optional path to save the plot
     """
     # Set style
@@ -124,19 +109,19 @@ def plot_confusion_matrix(true_actions: list, predicted_actions: list,
     plt.rcParams['figure.autolayout'] = True  # Automatically adjust layout to fit elements
    
     # Create figure with larger size
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor('white')
     
     # Compute confusion matrix and metrics
-    cm = confusion_matrix(true_actions, predicted_actions, labels=list(action_labels.keys()))
-    accuracy = accuracy_score(true_actions, predicted_actions)
-    precision, recall, f1, _ = precision_recall_fscore_support(true_actions, predicted_actions, 
+    cm = confusion_matrix(y_true, y_pred, labels=list(ACTION_LABELS.keys()))
+    accuracy = accuracy_score(y_true, y_pred)
+    precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, 
                                                              average='weighted')
     
     # Create display object
     disp = ConfusionMatrixDisplay(
         confusion_matrix=cm,
-        display_labels=[action_labels[i] for i in sorted(action_labels.keys())]
+        display_labels=[ACTION_LABELS[i] for i in sorted(ACTION_LABELS.keys())]
     )
     
     # Plot with enhanced styling
@@ -167,23 +152,39 @@ def plot_confusion_matrix(true_actions: list, predicted_actions: list,
     
     # Adjust layout
     plt.tight_layout()
-    
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
-    
     plt.show()
 
-def create_animated_prediction_plot(df: pd.DataFrame, target_column: str,
-                                  action_labels: dict, save_path: str = None) -> None:
+def _process_df_for_animation(df: pd.DataFrame, y_true: list, y_pred: list, lookback: int) -> pd.DataFrame:
+    df = df.iloc[lookback:-1].copy()
+    df.index.name = 'Time Step'
+
+    # One-hot encode predicted actions for visualization
+    for action, label in ACTION_LABELS.items():
+        df[label] = [1 if x == action else 0 for x in y_pred]
+
+    # Add predicted and true actions to the DataFrame
+    df['y_pred'] = y_pred
+    df['y_true'] = y_true
+    return df
+
+def plot_animated_signal_line_chart(df: pd.DataFrame, target_column: str, 
+                                    y_true: list, y_pred: list, lookback: int, save_path:str = None) -> None:
     """
     Creates an animated plot showing the evolution of predictions over time.
 
     Args:
-        df: DataFrame containing the time series data and predictions
+        df: DataFrame containing the time series data
         target_column: Name of the target column to plot
-        action_labels: Dictionary mapping action indices to their labels
+        y_true (list): List of true values.
+        y_pred (list): List of predicted values.
+        lookback: Lookback window
         save_path: Optional path to save the animation
     """
+
+    # Prepare data
+    df = _process_df_for_animation(df=df, y_true=y_true, y_pred=y_pred, lookback=lookback)
 
     plt.style.use('classic')
     # Move plot to the right side to make space for the legend
@@ -197,11 +198,11 @@ def create_animated_prediction_plot(df: pd.DataFrame, target_column: str,
     line, = ax.plot([], [], label=target_column, color='#2E86C1', linewidth=2)
     # The scatter labels should now indicate they represent predictions
     scatter_up = ax.scatter([], [], marker='^', color='#27AE60', s=100,
-                             label=f'{action_labels[0]} (Predicted)', alpha=0.7)
+                             label=f'{ACTION_LABELS[0]} (Predicted)', alpha=0.7)
     scatter_down = ax.scatter([], [], marker='v', color='#E74C3C', s=100,
-                              label=f'{action_labels[1]} (Predicted)', alpha=0.7)
+                              label=f'{ACTION_LABELS[1]} (Predicted)', alpha=0.7)
     scatter_same = ax.scatter([], [], marker='o', color='#F39C12', s=100,
-                              label=f'{action_labels[2]} (Predicted)', alpha=0.7)
+                              label=f'{ACTION_LABELS[2]} (Predicted)', alpha=0.7)
 
     # Set axis limits
     ax.set_xlim(df.index.min() - 1, df.index.max() + 1)
@@ -210,7 +211,7 @@ def create_animated_prediction_plot(df: pd.DataFrame, target_column: str,
     # Add labels and title
     ax.set_xlabel('Time Step', fontsize=14)
     ax.set_ylabel(target_column, fontsize=14)
-    ax.set_title('Signal and Predicted Actions (Live)', fontsize=16)
+    ax.set_title('Signal and Predicted Actions (Animation)', fontsize=16)
     ax.legend(loc='center left', bbox_to_anchor=(1.01, 0.5))
     ax.grid(True, linestyle='--', alpha=0.7)
 
@@ -229,7 +230,7 @@ def create_animated_prediction_plot(df: pd.DataFrame, target_column: str,
             next_action_index = df.index[frame]
 
             # The prediction is for the current 'frame' index
-            next_predicted_action = df['predicted_action'].iloc[frame]
+            next_predicted_action = df['y_pred'].iloc[frame]
             current_val_for_arrow = df[target_column].iloc[frame]
 
             arrow_colors = {0: '#27AE60', 1: '#E74C3C', 2: '#F39C12'}
@@ -272,7 +273,35 @@ def create_animated_prediction_plot(df: pd.DataFrame, target_column: str,
 
     # Set figure size to accommodate legend
     plt.subplots_adjust(right=0.85)
+    plt.show()
+    return ani
 
+def plot_evolution_of_fitness_scores_across_generations(results):
+    """
+    Plots the distribution of fitness scores for each generation.
+    
+    Args:
+        results (pd.DataFrame): DataFrame containing the tuning results.
+    """
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=results, x='generation', y='fitness')
+    plt.title('Fitness Score Distribution by Generation')
+    plt.xlabel('Generation')
+    plt.ylabel('Fitness Score')
     plt.show()
 
-    return ani
+def plot_average_diversity_scores_across_generations(results):
+    """
+    Plots the average diversity score for each generation.
+    
+    Args:
+        results (pd.DataFrame): DataFrame containing the tuning results.
+    """
+    avg_diversity_by_gen = results.groupby('generation')['diversity_score'].mean()
+    plt.figure(figsize=(10, 6))
+    plt.plot(avg_diversity_by_gen.index, avg_diversity_by_gen.values, marker='o')
+    plt.title('Average Population Diversity by Generation')
+    plt.xlabel('Generation')
+    plt.ylabel('Average Diversity Score')
+    plt.grid(True)
+    plt.show()

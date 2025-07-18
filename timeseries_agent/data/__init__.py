@@ -1,3 +1,7 @@
-from .sample_data import create_simple_timeseries, create_random_walk, TimeSeriesData
+"""Data utilities for timeseries-based reinforcement learning."""
 
-__all__ = ['create_simple_timeseries', 'create_random_walk', 'TimeSeriesData']
+from .sequential_dataset import SequentialTimeSeriesDataset
+
+__all__ = [
+    'SequentialTimeSeriesDataset'
+]

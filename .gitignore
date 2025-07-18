@@ -7,6 +7,7 @@ __pycache__/
 venv/
 .venv/
 env/
+.env
 
 # Distribution / packaging
 build/
@@ -30,3 +31,8 @@ Thumbs.db
 
 # Project specific ignores
 logs/
+data/
+utils
+30_pattern_analysis.py
+30_stock_rl_example.ipynb
+timeseries_agent.egg-info/

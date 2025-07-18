@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="timeseries_agent",
-    version="0.0.29", 
+    version="0.1.0", 
     author="Collins Patrick Ohagwu",   
     author_email="cpohagwu@gmail.com", 
     description="A Policy Gradient RL agent for time series prediction using PyTorch Lightning.",
@@ -16,7 +16,8 @@ setup(
     install_requires=[
         "pandas>=1.0.0",
         "numpy>=1.19.0",
-        "lightning>=2.5.0",    
+        "lightning>=2.5.0",
+        "litmodels>=0.1.8",   
         "matplotlib>=3.0.0",
         'torch>=1.9.0; platform_system=="Linux"',
         'torch>=1.9.0; platform_system=="Darwin"',
