@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="doc/_static/logo.png" width="300">
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/logo.png" width="300">
 </div>
 
 TimeSeries Agent is a powerful reinforcement learning library designed for time series analysis and prediction. Built on top of PyTorch and PyTorch Lightning, it provides a flexible framework for training RL agents to work with time series data. It uses modern policy gradient algorithms like PPO and REINFORCE, and offers hyperparameter tuning using genetic algorithms.
@@ -16,7 +16,7 @@ TimeSeries Agent is a powerful reinforcement learning library designed for time 
 
 </div>
 <div align="center">
-  <img src="doc/_static/predictions_animation.gif"/>
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/predictions_animation.gif"/>
 </div>
 <br>
 
@@ -72,7 +72,7 @@ Key considerations when preparing your data:
 
 </div>
 <div align="center">
-  <img src="doc/_static/predictions_analysis.png"/>
+  <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/predictions_analysis.png"/>
 </div>
 <br>
 

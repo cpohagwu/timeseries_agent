@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="timeseries_agent",
-    version="0.1.0", 
+    version="0.1.01", 
     author="Collins Patrick Ohagwu",   
     author_email="cpohagwu@gmail.com", 
     description="A Policy Gradient RL agent for time series prediction using PyTorch Lightning.",
