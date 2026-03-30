@@ -1,3 +1,13 @@
+# timeseries-agent → ARCHIVED
+
+This project is no longer maintained.
+
+**The new active library is `crosslearn`** — a clean, SB3-compatible feature extractor library for time-series and LLM foundation models (Chronos, TimeGPT, Lag-Llama, tiny-GPT, etc.) with (future support for) optional fine-tuning during RL training.
+
+→ https://github.com/cpohagwu/crosslearn
+
+Thank you to everyone who starred or tried the old version!
+
 <div align="center">
   <img src="https://raw.githubusercontent.com/cpohagwu/timeseries_agent/main/doc/_static/logo.png" width="300">
 </div>
